@@ -14,19 +14,17 @@ class PrelabeledPredictor:
       return label_bytes
 
 
-backend = FolderBackend(img_dir="/media/ml/Data/ml/comma/img",
-                       predictor=PrelabeledPredictor("/media/ml/Data/ml/comma/label"))
+backend = FolderBackend(img_dir="/media/ml/Data/ml/robomow/img",
+                       label_dir="/media/ml/Data/ml/robomow/label",
+                       predictor=None)
 
 label_def = {"labels":
   [
-    {"shortname": "eraser", "color": [255,255,255]},
+    {"shortname": "unknown", "color": [255,255,255]},
     {"shortname": "sky", "color": [226, 196, 196]},
-    {"shortname": "road (drivable surfaces)", "color": [64, 32, 32]},
-    {"shortname": "road marks (lane lines, arrows)", "color": [255,0,0]},
-    {"shortname": "undrivable (trees, curbs, etc.)", "color": [204,255,0]},
-    {"shortname": "movable (cars, people, etc.)", "color": [0,255,102]},
-    {"shortname": "signs and traffic lights", "color": [0,102,255]},
-    {"shortname": "my car", "color": [204,0,255]},
+    {"shortname": "mowed", "color": [64, 32, 32]},
+    {"shortname": "to mow", "color": [255,0,0]},
+    {"shortname": "unmowable", "color": [204,255,0]},
   ]
 }
 

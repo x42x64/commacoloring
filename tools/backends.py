@@ -1,4 +1,4 @@
-import random, os, base64
+import random, os, base64, glob
 from .anotator_utils import Transcoder
 
 class Backend:
@@ -25,12 +25,15 @@ class Backend:
 
 
 class FolderBackend(Backend):
-    def __init__(self, img_dir, predictor=None):
+    def __init__(self, img_dir, label_dir, predictor=None):
         Backend.__init__(self, predictor)
         self.img_dir = img_dir
+        self.label_dir = label_dir
 
     def get_encoded_image_random(self):
-        fn = random.choice([f for f in os.listdir(os.path.abspath(self.img_dir)) if os.path.isfile(os.path.join(self.img_dir, f))])
+        all_img = [f for f in os.listdir(os.path.abspath(self.img_dir)) if os.path.isfile(os.path.join(self.img_dir, f))]
+        all_labels = [os.path.basename(f) for f in glob.glob(os.path.join(self.label_dir, "*", "*", "*.png")) if os.path.isfile(f)]
+        fn = random.choice(list(set(all_img) ^ set(all_labels)))
         png_bytes = self.get_image(fn)
         return fn, Transcoder().encode_image_bytestream(png_bytes)
 
@@ -44,7 +47,7 @@ class FolderBackend(Backend):
         except OSError:
             pass
     
-        png_bytes = self.decode_image_base64(data)
+        png_bytes = Transcoder().decode_image_base64(data)
         with open(os.path.join(filepath, name), 'wb') as f:
             f.write(png_bytes)
 
