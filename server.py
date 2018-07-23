@@ -2,8 +2,9 @@
 from flask import Flask, request, send_from_directory, Response
 import random, os, base64, json
 
-DATA_PATH = "data/driving/"
-from tools.db import conn
+from config import backend, label_def
+
+
 
 # set the project root directory as the static folder, you can set others.
 app = Flask(__name__, static_url_path='')
@@ -22,29 +23,37 @@ def send_css(path):
 
 @app.route('/sample')
 def sample():
-  cur = conn.cursor()
-  cur.execute("SELECT name, data FROM data OFFSET floor(random() * (SELECT count(*) FROM data)) LIMIT 1")
-  name, data = cur.fetchone()
-  ret = {"data": data, "name": name}
+  name, data = backend.get_encoded_image_random()
+  ret = {"name": name, "data": data}
+  print(name)
   return Response(json.dumps(ret))
 
 @app.route('/suggestion/<name>')
 def suggestion(name):
-  cur = conn.cursor()
-  cur.execute("SELECT data FROM suggestions WHERE name = %s", (name,))
-  data = cur.fetchone()[0]
+  data = backend.get_encoded_label(name)
   ret = {"data": data}
   return Response(json.dumps(ret))
 
 @app.route('/submit', methods=["POST"])
 def submit():
   data = request.form['data']
-  print request.form['name']
-  cur = conn.cursor()
-  cur.execute("INSERT into images2 (name, data, track, email, gid) VALUES (%s, %s, %s, %s, %s)", (request.form['name'], request.form['data'], request.form['track'], request.form['email'], request.form['gid']))
-  conn.commit()
-  cur.close()
+  print (request.form['name'])
+  backend.set_label(request.form['name'], request.form['data'], request.form['track'], request.form['gid'])
   return "thanks"
+
+@app.route('/labels/description')
+def label_desc():
+  labels = {
+    "labels": [l["shortname"] for l in label_def["labels"]]
+  }
+  return Response(json.dumps(labels))
+
+@app.route('/labels/color')
+def label_color():
+  colors = {
+    "colors": [l["color"] for l in label_def["labels"]]
+  }
+  return Response(json.dumps(colors))
 
 @app.route('/')
 def root():

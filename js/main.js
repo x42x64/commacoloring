@@ -1,27 +1,16 @@
 /* Main page dispatcher.
 */
 
-data = {
-  "labels": [
-    "eraser",
-    "sky",
-    "road (drivable surfaces)",
-    "road marks (lane lines, arrows)",
-    "undrivable (trees, curbs, etc.)",
-    "movable (cars, people, etc.)",
-    "signs and traffic lights",
-    "my car"
-  ],
-  "imageURLs": [
-    "data/driving/000.png",
-    "data/driving/007.png",
-    "data/driving/014.png"
-  ]
-};
+data = [];
+color = [];
+$.getJSON("/labels/description", function(a){
+   data=a;
+});
 
-/*require.config({
-  urlArgs: "bust=" + (new Date()).getTime()
-});*/
+$.getJSON("/labels/color", function(a){
+   color=a["colors"];
+});
+
 
 requirejs(['app/edit',
            'helper/colormap',
