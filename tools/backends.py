@@ -51,5 +51,21 @@ class FolderBackend(Backend):
         with open(os.path.join(filepath, name), 'wb') as f:
             f.write(png_bytes)
 
+class FolderBackendClassification(FolderBackend):
+    def __init__(self, img_dir, label_dir, task_id, predictor=None):
+        FolderBackend.__init__(self, img_dir, label_dir, predictor)
+
+        self.task_id = task_id
+
+    def set_label(self, name, data, session, user):
+        filepath = os.path.join(self.label_dir, user, session)
+        try:
+            os.makedirs(filepath)
+        except OSError:
+            pass
+    
+        classification_data = data
+        with open(os.path.join(filepath, str(self.task_id) + ".txt"), 'a') as f:
+            f.write(str(self.task_id) + "\t" + str(user) + "\t" + str(session) + "\t" + str(name) + "\t" + str(data) + "\r\n")
         
     
