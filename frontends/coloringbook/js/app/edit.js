@@ -89,7 +89,7 @@ function(Layer, Annotator, util) {
       } else {
         var data = annotator.export();
         var name = annotator.imageName;
-        $.post("/submit", { data: data, name: name, track: Cookies.get("track"), email: user_email, gid: user_gid }, function() {
+        $.post("./submit", { data: data, name: name, track: Cookies.get("track"), email: user_email, gid: user_gid }, function() {
           var count = getCount();
           count += 1;
           Cookies.set("count", count.toString());
@@ -336,7 +336,7 @@ function(Layer, Annotator, util) {
 
   // Entry point.
   function render(data, params) {
-    $.getJSON("/sample", function(json) {
+    $.getJSON("./sample", function(json) {
       var annotator = new Annotator(json.data, {
             width: params.width,
             height: params.height,
@@ -345,7 +345,7 @@ function(Layer, Annotator, util) {
             onload: function () {
               if (data.annotationURLs)
                 annotator.import(data.annotationURLs[id]);
-              $.getJSON("/suggestion/"+json.name, function(json2) {
+              $.getJSON("./suggestion/"+json.name, function(json2) {
                 annotator.setFromURL(json2.data);
               });
               annotator.hide("boundary");

@@ -3,11 +3,11 @@
 
 data = [];
 color = [];
-$.getJSON("/labels/description", function(a){
+$.getJSON("./labels/description", function(a){
    data=a;
 });
 
-$.getJSON("/labels/color", function(a){
+$.getJSON("./labels/color", function(a){
    color=a["colors"];
 });
 
